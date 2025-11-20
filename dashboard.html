@@ -541,9 +541,15 @@
                     
                     <div class="button-group">
                         <button type="submit" class="btn-submit" id="btnSubmit">Kirim Absensi</button>
+                        <!-- TOMBOL REKAP UNTUK ADMIN - SELALU TAMPIL -->
                         <button type="button" class="btn-rekap" id="btnRekap" style="display: none;" onclick="window.location.href='rekap.html'">📊 Lihat Rekap Kehadiran</button>
                     </div>
                 </form>
+
+                <!-- TOMBOL REKAP KHUSUS JIKA SUDAH ABSEN -->
+                <div class="button-group" id="rekapButtonGroup" style="display: none;">
+                    <button type="button" class="btn-rekap" onclick="window.location.href='rekap.html'">📊 Lihat Rekap Kehadiran</button>
+                </div>
             </div>
         </div>
     </div>
@@ -556,16 +562,16 @@
         // ============================================
         // GANTI CONFIG INI DENGAN CONFIG ANDA SENDIRI
         // ============================================
-        const firebaseConfig = {
-        apiKey: "AIzaSyAUe6lc9fPEmmaZbXvJudDt-xjFb4koFQg",
-        authDomain: "tugasakhirsim-kelompok2.firebaseapp.com",
-        databaseURL: "https://tugasakhirsim-kelompok2-default-rtdb.firebaseio.com",
-        projectId: "tugasakhirsim-kelompok2",
-        storageBucket: "tugasakhirsim-kelompok2.firebasestorage.app",
-        messagingSenderId: "192722329812",
-        appId: "1:192722329812:web:490fe9fa034e090ceedb41",
+       const firebaseConfig = {
+          apiKey: "AIzaSyAUe6lc9fPEmmaZbXvJudDt-xjFb4koFQg",
+          authDomain: "tugasakhirsim-kelompok2.firebaseapp.com",
+          databaseURL: "https://tugasakhirsim-kelompok2-default-rtdb.firebaseio.com",
+          projectId: "tugasakhirsim-kelompok2",
+          storageBucket: "tugasakhirsim-kelompok2.firebasestorage.app",
+          messagingSenderId: "192722329812",
+          appId: "1:192722329812:web:490fe9fa034e090ceedb41",
         measurementId: "G-4L4CX01R87"
-        };
+    };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -610,15 +616,15 @@
 
         // Cari data mahasiswa yang sedang login
         const currentStudent = students.find(s => s.nim === currentNIM);
+        const isAdmin = currentNIM === '131424085';
 
         // Tampilkan info user
         document.getElementById('currentUser').textContent = `${currentStudent.nama} (${currentStudent.nim})`;
         document.getElementById('studentNIM').textContent = currentStudent.nim;
         document.getElementById('studentName').textContent = currentStudent.nama;
 
-        // FITUR KHUSUS: Tampilkan admin panel dan tombol rekap untuk NIM 131424085
-        if (currentNIM === '131424085') {
-            document.getElementById('btnRekap').style.display = 'block';
+        // FITUR KHUSUS: Tampilkan admin panel untuk NIM 131424085
+        if (isAdmin) {
             document.getElementById('specialBadge').innerHTML = '<span class="special-access-badge">👑 Admin Access</span>';
             document.getElementById('adminPanel').style.display = 'block';
         }
@@ -772,10 +778,20 @@
                 document.getElementById('loadingCheck').style.display = 'none';
                 
                 if (hasAttended) {
+                    // Sudah absen hari ini
                     document.getElementById('errorMsg').textContent = 'Anda sudah mengisi absensi hari ini!';
                     document.getElementById('attendanceForm').style.display = 'none';
+                    
+                    // Tampilkan tombol rekap (baik admin maupun mahasiswa biasa)
+                    document.getElementById('rekapButtonGroup').style.display = 'flex';
                 } else {
+                    // Belum absen
                     document.getElementById('attendanceForm').style.display = 'block';
+                    
+                    // Tampilkan tombol rekap di dalam form jika admin
+                    if (isAdmin) {
+                        document.getElementById('btnRekap').style.display = 'block';
+                    }
                 }
             })
             .catch((error) => {
@@ -797,7 +813,7 @@
             
             btnSubmit.disabled = true;
             btnSubmit.textContent = '⏳ Menyimpan...';
-
+            
             // Simpan log absensi
             const attendanceLogRef = database.ref('attendanceLog/' + currentNIM + '/' + today);
             
