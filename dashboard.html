@@ -340,6 +340,10 @@
             background: #e74c3c;
         }
 
+        .radio-label input[type="radio"]:checked ~ .radio-custom.sakit::after {
+            background: #3498db;
+        }
+
         .button-group {
             display: flex;
             gap: 15px;
@@ -544,23 +548,28 @@ if ('serviceWorker' in navigator) {
                 <div class="error-message" id="errorMsg"></div>
                 
                 <form id="attendanceForm" style="display: none;">
-                    <div class="radio-group">
-                        <label class="radio-label">
-                            <input type="radio" name="status" value="Hadir" required>
-                            <span class="radio-custom hadir"></span>
-                            Hadir
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="status" value="Izin" required>
-                            <span class="radio-custom izin"></span>
-                            Izin
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="status" value="Tidak Hadir" required>
-                            <span class="radio-custom tidak-hadir"></span>
+                   <div class="radio-group">
+                      <label class="radio-label">
+                           <input type="radio" name="status" value="Hadir" required>
+                           <span class="radio-custom hadir"></span>
+                             Hadir
+                      </label>
+                           <label class="radio-label">
+                           <input type="radio" name="status" value="Izin" required>
+                           <span class="radio-custom izin"></span>
+                             Izin
+                      </label>
+                           <label class="radio-label">
+                           <input type="radio" name="status" value="Sakit" required>
+                           <span class="radio-custom sakit"></span>
+                            Sakit
+                      </label>
+                           <label class="radio-label">
+                           <input type="radio" name="status" value="Tidak Hadir" required>
+                           <span class="radio-custom tidak-hadir"></span>
                             Tidak Hadir
-                        </label>
-                    </div>
+                      </label>
+                  </div>
                     
                     <div class="button-group">
                         <button type="submit" class="btn-submit" id="btnSubmit">Kirim Absensi</button>
@@ -851,6 +860,7 @@ if ('serviceWorker' in navigator) {
                         meetings: {},
                         hadir: 0,
                         izin: 0,
+                        sakit: 0,
                         tidakHadir: 0
                     };
                     
@@ -858,12 +868,15 @@ if ('serviceWorker' in navigator) {
                     studentData.meetings[currentMeeting] = status;
                     
                     // Update counter
-                    if (status === 'Hadir') {
-                        studentData.hadir = (studentData.hadir || 0) + 1;
+                   // Update counter
+                       if (status === 'Hadir') {
+                       studentData.hadir = (studentData.hadir || 0) + 1;
                     } else if (status === 'Izin') {
-                        studentData.izin = (studentData.izin || 0) + 1;
+                       studentData.izin = (studentData.izin || 0) + 1;
+                    } else if (status === 'Sakit') {
+                       studentData.sakit = (studentData.sakit || 0) + 1;
                     } else if (status === 'Tidak Hadir') {
-                        studentData.tidakHadir = (studentData.tidakHadir || 0) + 1;
+                       studentData.tidakHadir = (studentData.tidakHadir || 0) + 1;
                     }
                     
                     // Simpan ke Firebase
